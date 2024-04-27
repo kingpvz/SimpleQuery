@@ -12,5 +12,5 @@ You can use it to easily manage any collection of .sqlt arrays, quickly create a
 
 ## [Koula](https://github.com/kingpvz/Koula)
 Koula is a simple tkinter game. It allows you to create custom levels. Level data uses a modified SimpleQuery syntax.
-<div style="display: flex; justify-content: space-around; font-size: 1.5em;"><a href="https://github.com/kingpvz/Koula?tab=readme-ov-file#how-to-play" target="_blank"><b>READ ME</b></a>
-<a href="https://github.com/kingpvz/Koula?tab=readme-ov-file#documentation" target="_blank"><b>DOCUMENTATION</b></a></div>
+<div style="display: flex; justify-content: space-around; font-size: 1.5em;"><a style="margin: 10%" href="https://github.com/kingpvz/Koula?tab=readme-ov-file#how-to-play" target="_blank"><b>READ ME</b></a>
+<a style="margin: 10%" href="https://github.com/kingpvz/Koula?tab=readme-ov-file#documentation" target="_blank"><b>DOCUMENTATION</b></a></div>

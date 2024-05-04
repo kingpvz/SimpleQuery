@@ -9,7 +9,7 @@ def execute(cmd, vars):
         return vars.get(key, m.group(0))
     
     def replaceescapes(m):
-        m = m.replace("\\n", "\n").replace("\\s", " ").replace("\\t","    ").replace("\\0", "")
+        m = m.replace("\\n", "\n").replace("\\s", " ").replace("\\t","    ").replace("\\0", "").replace("\\$lc;", "{").replace("\\$rc;", "}").replace("\\$bs;", "\\")
         return m
 
     x = cmd.strip()

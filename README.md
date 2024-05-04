@@ -1,4 +1,4 @@
-# [OFFICIAL WEBSITE](https://kingpvz.github.io/projects/sq) - [DOCUMENTATION](https://kingpvz.github.io/projects/sq/docs)
+# [OFFICIAL WEBSITE](https://kingpvz.github.io/projects/sq) &nbsp; | &nbsp; [DOCUMENTATION](https://kingpvz.github.io/projects/sq/docs)
 
 ### About this repository
 Download this repository to run SimpleQuery commands and scripts. Keep in mind that SimpleQuery requires Python 3.10 or later to work.

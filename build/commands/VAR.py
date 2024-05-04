@@ -8,9 +8,9 @@ def declare(x, vars):
 
 
 
-def pr(x, vars):
+def pr(x, vars, fn):
     if len(x) < 2: raise SyntaxError("Please provide a value to print.")
-    else: print(" ".join(x[1:]))
+    else: print(fn(" ".join(x[1:])))
 
 
 

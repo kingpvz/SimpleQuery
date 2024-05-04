@@ -2,7 +2,7 @@ import build.fn as FN
 
 VARIABLESTORAGE = {}
 
-print("SimpleQuery Console alpha1.0\n")
+print("SimpleQuery Console alpha1.0.1\n")
 while True:
     x = input(">  ")
     try: FN.execute(x, VARIABLESTORAGE)

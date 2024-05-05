@@ -26,7 +26,7 @@ def listall(x, vars):
     if len(x) == 1:
         s = "\n"
         for k,v in vars.items():
-            s+=k+" = "+v+"\n"
+            s+=k+" = "+str(v)+"\n"
         if len(vars.items()) == 0:
             s = "There are no saved variables."
         return s, s

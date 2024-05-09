@@ -1,17 +1,6 @@
-import re
-
-def declare(x, vars):
-    if len(x) < 4: raise SyntaxError("To declare a variable follow this syntax: 'var name = value'. Don't forget the spaces!")
-    elif x[2] != "=": raise SyntaxError("To declare a variable follow this syntax: 'var name = value'. Don't forget the spaces!")
-    elif not re.match(r'\w+', x[1]): raise ValueError("Variable name must only contain letters, numbers and underscores.")
-    else: vars[x[1]] = " ".join(x[3:]); return None, None
-
-
-
 def pr(x, vars, fn):
     if len(x) < 2: raise SyntaxError("Please provide a value to print.")
     else: return(fn(" ".join(x[1:]))), None
-
 
 
 def delete(x, vars):
@@ -20,7 +9,6 @@ def delete(x, vars):
         else: raise ValueError("This variable doesn't exist.")
     else: raise SyntaxError("To delete a variable follow this syntax: 'del variable_name'")
    
-
 
 def listall(x, vars):
     if len(x) == 1:
@@ -31,3 +19,26 @@ def listall(x, vars):
             s = "There are no saved variables."
         return s, s
     else: raise SyntaxError("Unexpected parameter provided.")
+    
+
+def literal(x, vars, fn):
+    if not len(x) == 1: return None, fn(" ".join(x[1:]))
+    else: return None, None
+    
+
+def number(x, vars, isdecimal):
+    if len(x) != 2: raise SyntaxError("Please provide a number to return.")
+    else:
+        try:
+            if isdecimal: m = float(x[1].replace(",","."))
+            else: m = int(x[1].replace(",","."))
+        except ValueError: raise ValueError("Provided parameter is not a number.")
+        else: return None, m
+        
+
+def boolean(x, vars):
+    if len(x) != 1: raise SyntaxError("Unexpected parameter provided.")
+    else:
+        if x[0] == "true": return None, True
+        elif x[0] == "false": return None, False
+        else: raise SyntaxError("How did you do this")

@@ -1,0 +1,14 @@
+if true
+print test
+.
+if false
+print lol
+.
+
+lit vs
+
+if true
+print test
+if false
+print lol
+..

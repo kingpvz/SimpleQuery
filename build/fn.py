@@ -1,3 +1,4 @@
+from os import replace
 from xml.dom import SyntaxErr
 from .commands import *
 import re
@@ -35,7 +36,7 @@ def execute(cmd, vars, fns):
         case "true" | "false": P,R = VAR.boolean(x, vars)
         case "concat": P,R = concatenate(x, vars, fns)
         case "with": P,R = variableparameter(x, vars, fns, replaceescapes)
-        case "call": P,R = callfn(x, vars, fns)
+        case "call": P,R = callfn(x, vars, fns, replaceescapes)
         
         case "github": P,R = GITHUB.github(x, vars)
         case "web": P,R = WEB.web(x, vars)
@@ -66,7 +67,7 @@ def variableparameter(x, vars, fns, fn):
     if len(x) < 3: raise SyntaxError("with command must follow this syntax: 'with *parameter* COMMAND'")
     elif x[2] == "concat": return concatenate(x[2:], vars, fns, sep=fn(x[1]))
 
-def callfn(x, vars, fns):
+def callfn(x, vars, fns, fn):
     if len(x) < 2: raise SyntaxError("No function to call was provided.")
     elif x[1] not in fns: raise SyntaxError("This function doesn't exist.")
     else:
@@ -75,5 +76,6 @@ def callfn(x, vars, fns):
             if i.split()[0].lower() != "return":
                 execute(i, vars, fns)
             else:
-                RET = i[7:]
+                RET = execute(i[7:], vars, fns)
+        RET = fn(RET)
         return None, RET

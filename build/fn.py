@@ -1,8 +1,10 @@
 from os import replace
+from threading import local
 from xml.dom import SyntaxErr
 from .commands import *
 import re
 
+LOCALNAME = ""
 
 REPLACINGS = [("\\n", "\n"), ("\\s", " "), ("\\t", "\t"), ("\\l", "{"), ("\\r", "}"), ("\\$sc.", ";"), ("\\et.", "&")]
 REPLACINGS.append(("\\b", "\\"))
@@ -54,10 +56,10 @@ def declarevariable(x, vars, fns):
     elif x[2] != "=":
         if x[2] == ":=":
             if not re.match(r'\w+', x[1]): raise ValueError("Variable name must only contain letters, numbers and underscores.")
-            else: vars[x[1]] = " ".join(x[3:]); return None, None
+            else: vars[LOCALNAME+x[1]] = " ".join(x[3:]); return None, None
         else: raise SyntaxError("To declare a variable follow this syntax: 'var variable_name = COMMAND_WITH_RETURN'. Don't forget the spaces!")
     elif not re.match(r'\w+', x[1]): raise ValueError("Variable name must only contain letters, numbers and underscores.")
-    else: vars[x[1]] = execute(" ".join(x[3:]), vars, fns); return None, None
+    else: vars[LOCALNAME+x[1]] = execute(" ".join(x[3:]), vars, fns); return None, None
     
 def concatenate(x, vars, fns, sep=""):
     if len(x) < 4 or len([i for i in x if i=="&"]) != 1: raise SyntaxError("concat command must follow this syntax: 'concat COMMAND1 & COMMAND2'.")
@@ -68,14 +70,17 @@ def variableparameter(x, vars, fns, fn):
     elif x[2] == "concat": return concatenate(x[2:], vars, fns, sep=fn(x[1]))
 
 def callfn(x, vars, fns, fn):
+    global LOCALNAME
     if len(x) < 2: raise SyntaxError("No function to call was provided.")
     elif x[1] not in fns: raise SyntaxError("This function doesn't exist.")
     else:
+        LOCALNAME = "LOCAL__"+x[1]+"__"
         RET = None
         for i in fns[x[1]]:
             if i.split()[0].lower() != "return":
-                execute(i, vars, fns)
+                execute(i.replace("{", "{"+LOCALNAME), vars, fns)
             else:
                 RET = execute(i[7:], vars, fns)
-        RET = fn(RET)
+        if type(RET) == type("str"): RET = fn(RET)
+        LOCALNAME = ""
         return None, RET

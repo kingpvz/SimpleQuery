@@ -18,6 +18,7 @@ def CONTEXT_EXECUTE(x):
     global LN, CONTEXT, CURRENT_FUNCTION
     if x.split()[0].lower() != "fn" and CONTEXT:
         LN += 1
+        FN.execute(x, VARIABLESTORAGE, FUNCTIONS)
         try: FN.execute(x, VARIABLESTORAGE, FUNCTIONS)
         except SyntaxError as e: print(f"Syntax Error at line {LN}: {e}"); CONTEXT_BREAK()
         except ValueError as e: print(f"Value Error at line {LN}: {e}"); CONTEXT_BREAK()
@@ -33,7 +34,7 @@ def CONTEXT_EXECUTE(x):
             CURRENT_FUNCTION.append(x)
 
 
-print("SimpleQuery Interpreter alpha1.0.0\n")
+print("SimpleQuery Interpreter alpha1.0.1\n")
 while True:
     FL = input("Please input the path to a .sq file to execute: ")
     if not FL.endswith(".sq"): FL += ".sq"

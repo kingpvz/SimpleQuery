@@ -1,0 +1,7 @@
+fn a
+var a := test
+print {a}
+.
+
+call a
+print {LOCAL__a__a}

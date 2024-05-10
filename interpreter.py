@@ -28,7 +28,7 @@ def CONTEXT_EXECUTE(x):
     else:
         if re.match(r"^\.{1,}$", x): CONTEXT-=x.count(".")
         if CONTEXT < 0: print("Closed a code block that doesn't exist."); CONTEXT_BREAK()
-        if CONTEXT >= 0:
+        else:
             if x.split()[0].lower() in STATEMENTS: CONTEXT+= 1; CONTEXTS.insert(0, x)
             CONTEXT_CODEBLOCK.append(x)
             if CONTEXT == 0:

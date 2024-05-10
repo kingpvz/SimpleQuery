@@ -2,7 +2,7 @@ from .commands import *
 import re
 
 
-REPLACINGS = [("\\n", "\n"), ("\\s", " "), ("\\t", "\t"), ("\\l", "{"), ("\\r", "}"), ("\\$sc.", ";")]
+REPLACINGS = [("\\n", "\n"), ("\\s", " "), ("\\t", "\t"), ("\\l", "{"), ("\\r", "}"), ("\\$sc.", ";"), ("\\et.", "&")]
 REPLACINGS.append(("\\b", "\\"))
 
 def execute(cmd, vars):

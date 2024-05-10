@@ -1,3 +1,4 @@
+from xml.dom import SyntaxErr
 from .commands import *
 import re
 
@@ -5,7 +6,7 @@ import re
 REPLACINGS = [("\\n", "\n"), ("\\s", " "), ("\\t", "\t"), ("\\l", "{"), ("\\r", "}"), ("\\$sc.", ";"), ("\\et.", "&")]
 REPLACINGS.append(("\\b", "\\"))
 
-def execute(cmd, vars):
+def execute(cmd, vars, fns):
     
     def replacevars(m):
         key = m.group(1)
@@ -24,7 +25,7 @@ def execute(cmd, vars):
     P, R = None, None
     
     match x[0]:
-        case "var": P,R = declarevariable(x, vars)
+        case "var": P,R = declarevariable(x, vars, fns)
         case "print": P,R = VAR.pr(x, vars, replaceescapes)
         case "del": P,R = VAR.delete(x, vars)
         case "variables": P,R = VAR.listall(x, vars)
@@ -32,8 +33,9 @@ def execute(cmd, vars):
         case "int": P,R = VAR.number(x, vars, False)
         case "float": P,R = VAR.number(x, vars, True)
         case "true" | "false": P,R = VAR.boolean(x, vars)
-        case "concat": P,R = concatenate(x, vars)
-        case "with": P,R = variableparameter(x, vars, replaceescapes)
+        case "concat": P,R = concatenate(x, vars, fns)
+        case "with": P,R = variableparameter(x, vars, fns, replaceescapes)
+        case "call": P,R = callfn(x, vars, fns)
         
         case "github": P,R = GITHUB.github(x, vars)
         case "web": P,R = WEB.web(x, vars)
@@ -46,7 +48,7 @@ def execute(cmd, vars):
             R = R.replace(i[1], i[0])
     return R
 
-def declarevariable(x, vars):
+def declarevariable(x, vars, fns):
     if len(x) < 4: raise SyntaxError("To declare a variable follow this syntax: 'var variable_name = COMMAND_WITH_RETURN'. Don't forget the spaces!")
     elif x[2] != "=":
         if x[2] == ":=":
@@ -54,12 +56,24 @@ def declarevariable(x, vars):
             else: vars[x[1]] = " ".join(x[3:]); return None, None
         else: raise SyntaxError("To declare a variable follow this syntax: 'var variable_name = COMMAND_WITH_RETURN'. Don't forget the spaces!")
     elif not re.match(r'\w+', x[1]): raise ValueError("Variable name must only contain letters, numbers and underscores.")
-    else: vars[x[1]] = execute(" ".join(x[3:]), vars); return None, None
+    else: vars[x[1]] = execute(" ".join(x[3:]), vars, fns); return None, None
     
-def concatenate(x, vars, sep=""):
+def concatenate(x, vars, fns, sep=""):
     if len(x) < 4 or len([i for i in x if i=="&"]) != 1: raise SyntaxError("concat command must follow this syntax: 'concat COMMAND1 & COMMAND2'.")
-    else: r1, r2 = execute(" ".join(x[1:x.index("&")]), vars), execute(" ".join(x[x.index("&")+1:]), vars); return None, str(r1)+sep+str(r2)
+    else: r1, r2 = execute(" ".join(x[1:x.index("&")]), vars, fns), execute(" ".join(x[x.index("&")+1:]), vars, fns); return None, str(r1)+sep+str(r2)
                                                             
-def variableparameter(x, vars, fn):
+def variableparameter(x, vars, fns, fn):
     if len(x) < 3: raise SyntaxError("with command must follow this syntax: 'with *parameter* COMMAND'")
-    elif x[2] == "concat": return concatenate(x[2:], vars, sep=fn(x[1]))
+    elif x[2] == "concat": return concatenate(x[2:], vars, fns, sep=fn(x[1]))
+
+def callfn(x, vars, fns):
+    if len(x) < 2: raise SyntaxError("No function to call was provided.")
+    elif x[1] not in fns: raise SyntaxError("This function doesn't exist.")
+    else:
+        RET = None
+        for i in fns[x[1]]:
+            if i.split()[0].lower() != "return":
+                execute(i, vars, fns)
+            else:
+                RET = i[7:]
+        return None, RET

@@ -11,6 +11,6 @@ web open URL : Open URL in the default web browser.
 """)
     else:
         if x[1].lower() == "open":
-            if len(x) == 3: webbrowser.open(x[2], new=2, autoraise=True); return None, None
+            if len(x) == 3: webbrowser.open(x[2], new=2, autoraise=True); return None
             else: raise SyntaxError("Open command must have exactly one URL as a parameter.")
         else: print("Unknown WEB command.")

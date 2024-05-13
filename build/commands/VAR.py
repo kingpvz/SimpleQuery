@@ -1,6 +1,6 @@
 def pr(x, vars, fn):
     if len(x) < 2: raise SyntaxError("Please provide a value to print.")
-    else: return(fn(" ".join(x[1:]))), None
+    else: print(fn(" ".join(x[1:]))); return None
 
 
 def delete(x, vars):
@@ -17,13 +17,14 @@ def listall(x, vars):
             s+=k+" = "+str(v)+"\n"
         if len(vars.items()) == 0:
             s = "There are no saved variables."
-        return s, s
+        print(s)
+        return s
     else: raise SyntaxError("Unexpected parameter provided.")
     
 
 def literal(x, vars, fn):
-    if not len(x) == 1: return None, fn(" ".join(x[1:]))
-    else: return None, None
+    if not len(x) == 1: return fn(" ".join(x[1:]))
+    else: return None
     
 
 def number(x, vars, isdecimal):
@@ -33,12 +34,12 @@ def number(x, vars, isdecimal):
             if isdecimal: m = float(x[1].replace(",","."))
             else: m = int(x[1].replace(",","."))
         except ValueError: raise ValueError("Provided parameter is not a number.")
-        else: return None, m
+        else: return m
         
 
 def boolean(x, vars):
     if len(x) != 1: raise SyntaxError("Unexpected parameter provided.")
     else:
-        if x[0] == "true": return None, True
-        elif x[0] == "false": return None, False
+        if x[0] == "true": return True
+        elif x[0] == "false": return False
         else: raise SyntaxError("How did you do this")

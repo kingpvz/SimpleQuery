@@ -1,0 +1,3 @@
+alpha-1.1
+https://kingpvz.github.io/projects/sq/docs
+https://kingpvz.github.io/projects/sq

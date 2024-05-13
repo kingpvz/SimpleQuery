@@ -4,6 +4,9 @@ import re
 from random import randint as rnd
 import sys
 
+with open("build/info.txt") as f:
+    INFO = f.readlines()
+
 LN = 0
 
 CONTEXT = True
@@ -18,7 +21,6 @@ def CONTEXT_EXECUTE(x):
     global LN, CONTEXT, CURRENT_FUNCTION
     if x.split()[0].lower() != "fn" and CONTEXT:
         LN += 1
-        FN.execute(x, VARIABLESTORAGE, FUNCTIONS)
         try: FN.execute(x, VARIABLESTORAGE, FUNCTIONS)
         except SyntaxError as e: print(f"Syntax Error at line {LN}: {e}"); CONTEXT_BREAK()
         except ValueError as e: print(f"Value Error at line {LN}: {e}"); CONTEXT_BREAK()
@@ -34,7 +36,7 @@ def CONTEXT_EXECUTE(x):
             CURRENT_FUNCTION.append(x)
 
 
-print("SimpleQuery Interpreter alpha1.0.1\n")
+print(f"SimpleQuery Interpreter {INFO[0]}For more information see {INFO[2]}\n")
 while True:
     FL = input("Please input the path to a .sq file to execute: ")
     if not FL.endswith(".sq"): FL += ".sq"
@@ -57,4 +59,4 @@ while True:
             input("Press enter to close the interpreter.")
         break
     else:
-        print("Error, file doesn't exist, or is not a SimpleQuery script.")
+        print("Error, file doesn't exist, or is not a SimpleQuery script.\n")

@@ -31,6 +31,7 @@ def execute(cmd, vars, fns):
     match x[0]:
         case "var": R = declarevariable(x, vars, fns)
         case "print": R = VAR.pr(x, vars, replaceescapes)
+        case "printf": R = functionprint(x,vars,fns,replaceescapes)
         case "del": R = VAR.delete(x, vars)
         case "variables": R = VAR.listall(x, vars)
         case "lit" | "str" | "string": R = VAR.literal(x, vars, replaceescapes)
@@ -56,10 +57,10 @@ def declarevariable(x, vars, fns):
     if len(x) < 4: raise SyntaxError("To declare a variable follow this syntax: 'var variable_name = COMMAND_WITH_RETURN'. Don't forget the spaces!")
     elif x[2] != "=":
         if x[2] == ":=":
-            if not re.match(r'\w+', x[1]): raise ValueError("Variable name must only contain letters, numbers and underscores.")
+            if not re.match(r'^\w+$', x[1]): raise ValueError("Variable name must only contain letters, numbers and underscores.")
             else: vars[LOCALNAME+x[1]] = " ".join(x[3:]); return None
         else: raise SyntaxError("To declare a variable follow this syntax: 'var variable_name = COMMAND_WITH_RETURN'. Don't forget the spaces!")
-    elif not re.match(r'\w+', x[1]): raise ValueError("Variable name must only contain letters, numbers and underscores.")
+    elif not re.match(r'^\w+$', x[1]): raise ValueError("Variable name must only contain letters, numbers and underscores.")
     else: vars[LOCALNAME+x[1]] = execute(" ".join(x[3:]), vars, fns); return None
     
 def concatenate(x, vars, fns, sep=""):
@@ -107,3 +108,9 @@ def changescope(x, vars, fns):
         elif x[1].lower() == "custom":
             LOCALNAME = "LOCAL__CUSTOM__"+x[2]+"__"
         else: raise SyntaxError("Custom scope tag "+x[1]+" doesn't exist.")
+        
+def functionprint(x, vars,fns,fn):
+    if len(x)==1: raise SyntaxError("Please provide a value to print.")
+    else:
+        a = fn(execute(" ".join(x[1:]),vars,fns))
+        print(a)

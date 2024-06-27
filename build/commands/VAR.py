@@ -17,7 +17,6 @@ def listall(x, vars):
             s+=k+" = "+str(v)+"\n"
         if len(vars.items()) == 0:
             s = "There are no saved variables."
-        print(s)
         return s
     else: raise SyntaxError("Unexpected parameter provided.")
     

@@ -7,7 +7,7 @@ import re
 LOCALNAME = ""
 CURRENTFN = ""
 
-REPLACINGS = [("\\n", "\n"), ("\\s", " "), ("\\t", "\t"), ("\\l", "{"), ("\\r", "}"), ("\\$sc.", ";"), ("\\et.", "&")]
+REPLACINGS = [("\\n", "\n"), ("\\s", " "), ("\\t", "\t"), ("\\l", "{"), ("\\r", "}"), ("\\$sc.", ";"), ("\\$et.", "&")]
 REPLACINGS.append(("\\b", "\\"))
 
 def execute(cmd, vars, fns):
@@ -38,7 +38,7 @@ def execute(cmd, vars, fns):
         case "int": R = VAR.number(x, vars, False)
         case "float": R = VAR.number(x, vars, True)
         case "true" | "false": R = VAR.boolean(x, vars)
-        case "concat": R = concatenate(x, vars, fns)
+        case "concat": R = concatenate(x, vars, fns, replaceescapes)
         case "with": R = variableparameter(x, vars, fns, replaceescapes)
         case "call": R = callfn(x, vars, fns, replaceescapes)
         case "scope": R = changescope(x, vars, fns)
@@ -63,13 +63,13 @@ def declarevariable(x, vars, fns):
     elif not re.match(r'^\w+$', x[1]): raise ValueError("Variable name must only contain letters, numbers and underscores.")
     else: vars[LOCALNAME+x[1]] = execute(" ".join(x[3:]), vars, fns); return None
     
-def concatenate(x, vars, fns, sep=""):
+def concatenate(x, vars, fns, fn, sep=""):
     if len(x) < 4 or len([i for i in x if i=="&"]) != 1: raise SyntaxError("concat command must follow this syntax: 'concat COMMAND1 & COMMAND2'.")
-    else: r1, r2 = execute(" ".join(x[1:x.index("&")]), vars, fns), execute(" ".join(x[x.index("&")+1:]), vars, fns); return str(r1)+sep+str(r2)
+    else: r1, r2 = execute(" ".join(x[1:x.index("&")]), vars, fns), execute(" ".join(x[x.index("&")+1:]), vars, fns); return fn(str(r1))+sep+fn(str(r2))
                                                             
 def variableparameter(x, vars, fns, fn):
     if len(x) < 3: raise SyntaxError("with command must follow this syntax: 'with *parameter* COMMAND'")
-    elif x[2] == "concat": return concatenate(x[2:], vars, fns, sep=fn(x[1]))
+    elif x[2] == "concat": return concatenate(x[2:], vars, fns, fn, sep=fn(x[1]))
 
 def callfn(x, vars, fns, fn):
     global LOCALNAME, CURRENTFN
@@ -112,5 +112,6 @@ def changescope(x, vars, fns):
 def functionprint(x, vars,fns,fn):
     if len(x)==1: raise SyntaxError("Please provide a value to print.")
     else:
-        a = fn(execute(" ".join(x[1:]),vars,fns))
+        res = execute(" ".join(x[1:]),vars,fns)
+        a = fn(res) if type(res)==type("lol") else fn(str(res))
         print(a)
